@@ -176,6 +176,9 @@ class PageParser(Container):
         while result_found == False :
             parsed_results = self.extract_from_page()
             self.__pagenum += 1
-            if (parsed_results != []):
+            if self.__occurences == 0:
+                result_found = True
+                yield False
+            elif (parsed_results != []):
                 result_found = True
                 yield parsed_results[0]
