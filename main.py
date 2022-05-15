@@ -1,31 +1,39 @@
-# This is a sample Python script.
+import tkinter as tk
+import analyse
+from tkinter import *
+win = tk.Tk()
+win.geometry(f"800x500+100+200")
+win.title('Морфологический анализатор')
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings. ӕз бинонты
+def add_let() :
+    pos = len(ent1.get())
+    ent1.insert(pos, 'æ')
 
-import lingcorpora
-import json
-
-with open(r'venv\attributes.json', 'r', encoding="utf-8") as j:
-    json_data = json.load(j)
-
-def Print(lemma, tags):
-    print(lemma)
-    for tag in tags:
-        if tag in json_data:
-            print(json_data[tag])
-
-corp = lingcorpora.Corpus('ose')
-#results = corp.search('ӕз', n_results=1, get_analysis = True)
-results = corp.search('паддзахад', n_results=1, get_analysis = True)
-for result in results:
-    for i, target in enumerate(result):
-        for tok in target.analysis:
-                lemma = tok['lemma']
-                tags = tok['PoS'] +','+ tok['tag']
-                tags = tags.split(',')
-                Print(lemma, tags)
+def fill_text():
+    tokens = analyse.get_tags(ent1.get())
+    output_text=""
+    err_msg="Нет результатов анализа по данному слову"
+    for analysed_word in tokens:
+        output_text+=analysed_word+"\n\n"
+        err_msg=""
+    text.delete(1.0, END)
+    text.insert(1.0, output_text+err_msg)
 
 
+label_1 = tk.Label(win, text="Впишите слово, словарную форму которого нужно найти",
+                   font = ('Arial', 20),
+                   pady=20)
+btn1 = tk.Button(win, text="æ", font=('Arial', 15), command=add_let)
+ent1 = tk.Entry(win, font=('Arial', 15))
+btn2 = tk.Button(win, text='Найти', font=('Arial', 15), command=fill_text)
+text = Text(width=40, height=15, font=('Arial', 14))
+scroll = Scrollbar(command=text.yview)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+label_1.grid(row=0, columnspan=3)
+btn1.grid(row = 1, column=0, stick ='e')
+ent1.grid(row=1, column=1, stick ='we', ipady = 5)
+btn2.grid(row=1, column=2, stick ='w')
+text.grid(row = 2, column = 0, pady = 20, columnspan = 2, stick='we')
+scroll.grid(row = 2, column = 2, stick='nsw', pady=20)
+text.config(yscrollcommand=scroll.set)
+win.mainloop()
